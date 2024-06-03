@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+  be_account:
+    image: ${DOCKER_REGISTRY-}beaccount
+    build:
+      context: .
+      dockerfile: be_account/Dockerfile
+    ports:
+         - "5000:5000"
+         - "5001:5001"
+    depends_on:
+         -  be_account.db
+    environment:
+         - ASPNETCORE_ENVIRONMENT=Development
+         - ConnectionStrings__DefaultConnection=Host=be_account.db;Database=postgres;Username=postgres;Password=123456
+  be_account.db:
+    image: postgres:latest
+    environment:
+       - POSTGRES_USER=postgres
+       - POSTGRES_PASSWORD=123456
+       - POSTGRES_DB=postgres
+    volumes:
+       - ./volumes/data/db:/var/lib/postgresql/data
+    ports:
+       - "5432:5432"
